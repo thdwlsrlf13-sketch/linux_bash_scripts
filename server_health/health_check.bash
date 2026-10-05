@@ -5,7 +5,7 @@ MEM_WARN=85
 DISK_WARN=90
 INODE_WARN=90
 
-SERVICES=("sshd" "chronyd")
+SERVICES=("ssh")
 
 PORTS=(22)
 
@@ -93,6 +93,28 @@ check_disk() {
 	done
 }
 
+check_service() {
+	for service in "${SERVICES[@]}"
+	do
+		if systemctl is-active --quiet "$service"; then
+			print_ok "Service $service: active"
+		else
+			print_fail "Service $service: inactive"
+		fi
+	done
+}
+
+check_ports() {
+	for port in "${PORTS[@]}"
+	do
+		if ss -lnt | awk '{print $4}' | grep -q ":${port}"; then
+			print_ok "TCP port $port: LISTEN"
+		else
+			print_fail "TCP port $port: NOT LISTEN"
+		fi
+	done
+}
+
 echo "==================================="
 echo	"Server Health Check"
 echo	"Hostname: $(hostname)"
@@ -111,3 +133,9 @@ check_memory
 
 echo "--------disk--------"
 check_disk
+
+echo "--------service--------"
+check_service
+
+echo "--------ports--------"
+check_ports
