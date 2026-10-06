@@ -29,7 +29,7 @@ do
 
 		if [ "$ELAPSED" -ge "$COOLDOWN" ]; then
 
-			Message="[WARNING] Possible brute force: $IP ($COUNT failed attempts)"
+			MESSAGE="[WARNING] Possible brute force: $IP ($COUNT failed attempts)"
 
 			logger -p auth.warning -t brute-force "$MESSAGE"
 			printf '%s\n' "$MESSAGE" | wall
